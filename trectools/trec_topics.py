@@ -10,7 +10,8 @@ class TrecTopics:
     def __init__(self, topics={}):
         self.topics = topics
 
-    def read_topics_from_file(self, filename, topic_tag="topic", numberid_tag="number", number_attr=True, querytext_tag="query", debug=False):
+    def read_topics_from_file(self, filename, topic_tag="topic", numberid_tag="number", number_attr=True,
+                              querytext_tag="query", debug=False):
         """
             Reads a xml file into a TrecTopics object. Example:
             <topics>
@@ -63,13 +64,13 @@ class TrecTopics:
             outputdir = os.getcwd()
 
         self.outputfile = os.path.join(outputdir, filename)
-        if debug == True:
-            print("Writing topics to %s" % (self.outputfile))
+        if debug:
+            print("Writing topics to %s" % self.outputfile)
 
         if fileformat == "terrier":
             # Creates file object
             root = etree.Element('topics')
-            for qid, text in sorted(self.topics.items(), key=lambda x:x[0]):
+            for qid, text in sorted(self.topics.items(), key=lambda x: x[0]):
                 topic = etree.SubElement(root, 'top')
                 tid = etree.SubElement(topic, 'num')
                 tid.text = str(qid)
@@ -79,7 +80,7 @@ class TrecTopics:
             root = etree.Element('parameters')
             trecformat = etree.SubElement(root, 'trecFormat')
             trecformat.text = "true"
-            for qid, text in sorted(self.topics.items(), key=lambda x:x[0]):
+            for qid, text in sorted(self.topics.items(), key=lambda x: x[0]):
                 topic = etree.SubElement(root, 'query')
                 tid = etree.SubElement(topic, 'id')
                 tid.text = str(qid)
@@ -90,7 +91,5 @@ class TrecTopics:
                 elif fileformat == "indribaseline":
                     ttext.text = cleaned_text
 
-        f = open(self.outputfile, "w")
-        f.writelines(etree.tostring(root, pretty_print=True))
-        f.close()
-
+        with open(self.outputfile, "w") as f:
+            f.writelines(str(etree.tostring(root, pretty_print=True, encoding='unicode')))
