@@ -19,26 +19,29 @@ class TrecTerrier:
         cmd = "%s batchretrieve -t %s -w %s -Dtrec.results=%s -o %s" % (self.bin_path, topics, model,
                 result_dir, result_file)
 
-        cmd += " -Dmatching.retrieved_set_size=%d -Dtrec.output.format.length=%d " % (ndocs,ndocs)
+        cmd += " -Dmatching.retrieved_set_size=%d -Dtrec.output.format.length=%d " % (ndocs, ndocs)
 
         if terrierc is not None:
-            cmd += " -c c:%d " % (terrierc)
+            cmd += " -c c:%d " % terrierc
 
-        if qexp == True:
+        if qexp:
             cmd += " -q -Dexpansion.terms=%d -Dexpansion.documents=%d -c qemodel:%s" % (expTerms, expDocs, expModel)
 
-        if showoutput == False:
+        if not showoutput:
             cmd += (" > %s 2> %s" % (os.devnull, os.devnull))
 
+        if index:
+            cmd += "-I %s/data.properties" % index
+
         if debug:
-            print("Running: %s " % (cmd))
+            print("Running: %s " % cmd)
 
         r = sarge.run(cmd).returncode
 
         if r == 0:
             return TrecRun(os.path.join(result_dir, result_file))
         else:
-            print("ERROR with command %s" % (cmd))
+            print("ERROR with command %s" % cmd)
             return None
 
 
