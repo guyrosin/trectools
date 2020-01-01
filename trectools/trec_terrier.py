@@ -27,11 +27,11 @@ class TrecTerrier:
         if qexp:
             cmd += " -q -Dexpansion.terms=%d -Dexpansion.documents=%d -c qemodel:%s" % (expTerms, expDocs, expModel)
 
+        if index:
+            cmd += " -I %s/data.properties" % index
+
         if not showoutput:
             cmd += (" > %s 2> %s" % (os.devnull, os.devnull))
-
-        if index:
-            cmd += "-I %s/data.properties" % index
 
         if debug:
             print("Running: %s " % cmd)
