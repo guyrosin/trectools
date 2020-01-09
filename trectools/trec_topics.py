@@ -3,6 +3,7 @@ from lxml import etree
 import codecs
 from bs4 import BeautifulSoup
 import os
+import re
 
 
 class TrecTopics:
@@ -11,7 +12,7 @@ class TrecTopics:
         self.topics = topics
 
     def read_topics_from_file(self, filename, topic_tag="topic", numberid_tag="number", number_attr=True,
-                              querytext_tag="query", debug=False):
+                              querytext_tag="query", title_regex=None, debug=False, number_regex=None):
         """
             Reads a xml file into a TrecTopics object. Example:
             <topics>
@@ -33,9 +34,15 @@ class TrecTopics:
             if number_attr:
                 topic_id = topic.get(numberid_tag)
             else:
-                topic_id = topic.findNext(numberid_tag).getText()
+                topic_id = topic.findNext(numberid_tag).findAll(text=True, recursive=False)[0].strip()
+            if number_regex:
+                m = re.match(number_regex, topic_id)
+                topic_id = int(m.group(1))
 
-            query = topic.findNext(querytext_tag).getText()
+            query = topic.findNext(querytext_tag).findAll(text=True, recursive=False)[0].strip()
+            if title_regex:
+                m = re.match(title_regex, query)
+                query = m.group(1)
             if debug:
                 print("Number: %s Query: %s" % (topic_id, query))
             self.topics[topic_id] = query
