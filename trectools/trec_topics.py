@@ -65,7 +65,7 @@ class TrecTopics:
             Writes out the topics to a file.
             After one runs this method, TrecTopics.outputfile is available with the
             filepath to the created file.
-            fileformat: terrier, indri or indribaseline
+            fileformat: terrier, indri, indribaseline or anserini
         """
         if outputdir is None:
             outputdir = os.getcwd()
@@ -74,7 +74,7 @@ class TrecTopics:
         if debug:
             print("Writing topics to %s" % self.outputfile)
 
-        if fileformat == "terrier":
+        if fileformat == "terrier" or fileformat == "anserini":
             # Creates file object
             root = etree.Element('topics')
             for qid, text in sorted(self.topics.items(), key=lambda x: x[0]):
