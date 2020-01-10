@@ -634,7 +634,7 @@ class TrecEval:
 
             Params
             -------
-            depth: the evaluation depth. Default = 1000
+            depth: the evaluation depth(s). Default = 1000
             per_query: If True, runs the evaluation per query. Default = False
             trec_eval: set to True if result should be the same as trec_eval, e.g., sort documents by score first. Default = True.
             removeUnjudged: set to True if you want to remove the unjudged documents before calculating this metric.
@@ -645,6 +645,9 @@ class TrecEval:
             else: returns a float value representing the RPrec.
 
         """
+        if isinstance(depth, list):
+            return [self.get_precision(d, per_query, trec_eval, removeUnjudged) for d in depth]
+
         label = "P@%d" % depth
 
         # check number of queries
