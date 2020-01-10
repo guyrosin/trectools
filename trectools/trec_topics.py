@@ -73,8 +73,9 @@ class TrecTopics:
         self.outputfile = os.path.join(outputdir, filename)
         if debug:
             print("Writing topics to %s" % self.outputfile)
+        xml_str_list = []
 
-        if fileformat == "terrier" or fileformat == "anserini":
+        if fileformat == "terrier":
             # Creates file object
             root = etree.Element('topics')
             for qid, text in sorted(self.topics.items(), key=lambda x: x[0]):
@@ -97,6 +98,20 @@ class TrecTopics:
                     ttext.text = "#combine( " + cleaned_text + " )"
                 elif fileformat == "indribaseline":
                     ttext.text = cleaned_text
+        elif fileformat == "anserini":
+            for qid, text in sorted(self.topics.items(), key=lambda x: x[0]):
+                topic = etree.Element('top')
+                tid = etree.SubElement(topic, 'num')
+                tid.text = f' Number:  {qid}'
+                ttext = etree.SubElement(topic, 'title')
+                ttext.text = f' Topic:  {text}'
+                etree.SubElement(topic, 'desc').text = ''  # text='' to create an empty tag: <desc></desc>
+                etree.SubElement(topic, 'narr').text = ''
+                xml_str = str(etree.tostring(topic, pretty_print=True, encoding='unicode'))
+                xml_str = re.sub(r'\n\s+', '\n', xml_str)  # remove identation
+                xml_str_list.append(xml_str)
 
+        xml_str = '\n'.join(xml_str_list) if xml_str_list else str(
+            etree.tostring(root, pretty_print=True, encoding='unicode'))
         with open(self.outputfile, "w") as f:
-            f.writelines(str(etree.tostring(root, pretty_print=True, encoding='unicode')))
+            f.writelines(xml_str)
