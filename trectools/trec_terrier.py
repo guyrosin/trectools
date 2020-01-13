@@ -16,7 +16,7 @@ class TrecTerrier:
             # Current dir is used if result_dir is not set
             result_dir = os.getcwd()
 
-        cmd = "%s batchretrieve -t %s -w %s -Dtrec.results=%s -o %s" % (self.bin_path, topics, model,
+        cmd = "%s/terrier batchretrieve -t %s -w %s -Dtrec.results=%s -o %s" % (self.bin_path, topics, model,
                 result_dir, result_file)
 
         cmd += " -Dmatching.retrieved_set_size=%d -Dtrec.output.format.length=%d " % (ndocs, ndocs)

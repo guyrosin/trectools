@@ -170,13 +170,13 @@ topics.printfile(fileformat="indribaseline")
 # </query>
 #</parameters>
 
-tt = TrecTerrier(bin_path="<PATH>/terrier/bin/terrier") # path to the binary terrier file
+tt = TrecTerrier(bin_path="<PATH>/terrier/bin")
 # Runs PL2 model from Terrier with Query Expansion
 tr = tt.run(index="<PATH>/terrier/var/index", topics="topics.xml.gz", qexp=True,
 model="PL2", result_file="terrier.baseline", expTerms=5, expDocs=3, expModel="Bo1") 
 
-ti = TrecIndri(bin_path="~/<PATH>/indri/bin/terrier") # path to the binary terrier file
-ti.run(index="<PATH>/indriindex", topics, model="dirichlet", parameters={"mu":2500}, 
+ti = TrecIndri(bin_path="<PATH>/indri/bin")
+ti.run(index="<PATH>/indriindex", topics=topics, model="dirichlet", parameters={"mu":2500}, 
 result_file="trec_indri.run", ndocs=1000, qexp=True, expTerms=5, expDocs=3)
 ```
 
