@@ -16,19 +16,16 @@ class TrecAnserini:
         self.bin_path = bin_path
 
     def run(self, index, topics, debug=True, model="bm25", ndocs=1000, result_dir=None, result_file="trec_anserini.run",
-            terrierc=None, expModel=None, expTerms=5, expDocs=3, showoutput=False):
+            expModel=None, expTerms=5, expDocs=3, showoutput=False):
 
         if result_dir is None:
             # Current dir is used if result_dir is not set
             result_dir = os.getcwd()
 
-        cmd = f"{self.bin_path} -index {index} -topicreader Trec -topics {topics} -{model} " \
-            f"-output {os.path.join(result_dir, result_file)}"
+        cmd = f"{self.bin_path}/SearchCollection -index {index} -topicreader Trec -topics {topics} -{model} " \
+              f"-output {os.path.join(result_dir, result_file)}"
 
         cmd += f" -hits={ndocs}"
-
-        if terrierc is not None:
-            cmd += " -c c:%d " % terrierc
 
         if expModel:
             cmd += f" -{expModel} -{expModel}.fbTerms={expTerms} -{expModel}.fbDocs={expDocs}"

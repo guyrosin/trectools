@@ -178,6 +178,10 @@ model="PL2", result_file="terrier.baseline", expTerms=5, expDocs=3, expModel="Bo
 ti = TrecIndri(bin_path="<PATH>/indri/bin")
 ti.run(index="<PATH>/indriindex", topics=topics, model="dirichlet", parameters={"mu":2500}, 
 result_file="trec_indri.run", ndocs=1000, qexp=True, expTerms=5, expDocs=3)
+
+ta = TrecAnserini(bin_path="<PATH>/indri/bin")
+ta.run(index="<PATH>/anseriniindex", topics=topics, model="bm25", 
+result_file="trec_anserini.run", ndocs=1000, expModel='rm3', expTerms=5, expDocs=3)
 ```
 
 #### Example 2
