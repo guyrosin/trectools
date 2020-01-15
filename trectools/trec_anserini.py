@@ -22,7 +22,8 @@ class TrecAnserini:
             # Current dir is used if result_dir is not set
             result_dir = os.getcwd()
 
-        cmd = f"{self.bin_path}/SearchCollection -index {index} -topicreader Trec -topics {topics} -{model} " \
+        program = f"{self.bin_path}/SearchCollection.bat" if os.name == 'nt' else f"{self.bin_path}/SearchCollection"
+        cmd = f"{program} -index {index} -topicreader Trec -topics {topics} -{model} " \
               f"-output {os.path.join(result_dir, result_file)}"
 
         cmd += f" -hits={ndocs}"

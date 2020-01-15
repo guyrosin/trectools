@@ -113,5 +113,5 @@ class TrecTopics:
 
         xml_str = '\n'.join(xml_str_list) if xml_str_list else str(
             etree.tostring(root, pretty_print=True, encoding='unicode'))
-        with open(self.outputfile, "w") as f:
+        with open(self.outputfile, "w", encoding='utf8') as f:
             f.writelines(xml_str)
