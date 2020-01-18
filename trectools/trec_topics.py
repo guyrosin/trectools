@@ -60,7 +60,8 @@ class TrecTopics:
             result[topid] = cleaned_text
         self.topics = result
 
-    def printfile(self, filename="output.xml", fileformat="terrier", outputdir=None, debug=True):
+    def printfile(self, filename="output.xml", fileformat="terrier", outputdir=None, debug=True,
+                  single_line_format=False):
         """
             Writes out the topics to a file.
             After one runs this method, TrecTopics.outputfile is available with the
@@ -74,6 +75,12 @@ class TrecTopics:
         if debug:
             print("Writing topics to %s" % self.outputfile)
         xml_str_list = []
+
+        if single_line_format:
+            lines = [f'{qid} {text}' for qid, text in sorted(self.topics.items(), key=lambda x: x[0])]
+            with open(self.outputfile, 'w', encoding='utf8') as f:
+                f.write('\n'.join(lines))
+            return
 
         if fileformat == "terrier":
             # Creates file object
