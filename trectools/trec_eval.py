@@ -93,6 +93,11 @@ class TrecEval:
             recip_rank.rename(columns={"recip_rank@1000": "value"}, inplace=True)
             results_per_query.append(recip_rank)
 
+            ndcg = self.get_ndcg(depth=10, per_query=True, trec_eval=True).reset_index()
+            ndcg["metric"] = "NDCG_10"
+            ndcg.rename(columns={"NDCG@10": "value"}, inplace=True)
+            results_per_query.append(ndcg)
+
         ps = {}
         for v in [5, 10, 15, 20, 30, 100, 200, 500, 1000]:
             ps[v] = self.get_precision(depth=v, per_query=False, trec_eval=True)
@@ -101,6 +106,7 @@ class TrecEval:
         bpref_ = self.get_bpref(depth=1000, per_query=False, trec_eval=True)
         rprec_ = self.get_rprec(depth=1000, per_query=False, trec_eval=True)
         recip_rank_ = self.get_reciprocal_rank(depth=1000, per_query=False, trec_eval=True)
+        ndcg = self.get_ndcg(depth=10, per_query=False, trec_eval=True)
 
         rows = [
             {"metric": "runid", "query": "all", "value": run_id},
@@ -122,6 +128,7 @@ class TrecEval:
             {"metric": "P_200", "query": "all", "value": ps[200]},
             {"metric": "P_500", "query": "all", "value": ps[500]},
             {"metric": "P_1000", "query": "all", "value": ps[1000]},
+            {"metric": "NDCG_10", "query": "all", "value": ndcg},
         ]
 
         # TODO: iprec_at_recall_LEVEL is missing from the default trec_eval metrics
@@ -434,7 +441,7 @@ class TrecEval:
 
             Params
             -------
-            depth: the evaluation depth. Default = 1000
+            depth: the evaluation depth(s). Default = 1000
             trec_eval: set to True if result should be the same as trec_eval, e.g., sort documents by score first. Default = True.
             per_query: If True, runs the evaluation per query. Default = False
             removeUnjudged: set to True if you want to remove the unjudged documents before calculating this metric.
@@ -444,6 +451,9 @@ class TrecEval:
             if per_query == True: returns a pandas dataframe with two cols (query, NDCG@d)
             else: returns a float value representing the RPrec.
         """
+
+        if isinstance(depth, list):
+            return [self.get_ndcg(d, per_query, trec_eval, removeUnjudged) for d in depth]
 
         label = "NDCG@%d" % depth
 
@@ -508,7 +518,7 @@ class TrecEval:
 
             Params
             -------
-            depth: the evaluation depth. Default = 1000
+            depth: the evaluation depth(s). Default = 1000
             per_query: If True, runs the evaluation per query. Default = False
             trec_eval: set to True if result should be the same as trec_eval, e.g., sort documents by score first. Default = True.
 
@@ -518,6 +528,9 @@ class TrecEval:
             else: returns a float value representing the RPrec.
 
         """
+
+        if isinstance(depth, list):
+            return [self.get_bpref(d, per_query, trec_eval) for d in depth]
 
         label = "Bpref@%d" % depth
 
@@ -572,6 +585,9 @@ class TrecEval:
         """
             other_qrels: the qrels for other dimensions, i.e., understandability or trustworthiness
         """
+
+        if isinstance(depth, list):
+            return [self.get_ubpref(other_qrels, per_query, trec_eval, normalization_factor, d) for d in depth]
 
         if not isinstance(other_qrels, TrecQrel):
             raise TypeError('"other_qrels" should be a TrecQrel object')
