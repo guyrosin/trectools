@@ -11,7 +11,7 @@ class TrecTerrier:
         self.bin_path = bin_path
 
     def run(self, index, topics, debug=True, model="PL2", ndocs=1000, result_dir=None, result_file="trec_terrier.run",
-            topics_single_line_format=False,
+            topics_single_line_format=False, model_param=None,
             terrierc=None, qexp=False, expTerms=5, expDocs=3, expModel="Bo1", showoutput=False):
 
         if result_dir is None:
@@ -19,7 +19,8 @@ class TrecTerrier:
             result_dir = os.getcwd()
 
         program = f"{self.bin_path}/terrier.bat" if os.name == 'nt' else f"{self.bin_path}/terrier"
-        cmd = f"{program} batchretrieve -t {topics} -w {model} -Dtrec.results={result_dir} -o {result_file}"
+        model_param = f'-c c:{model_param}' if model_param is not None else ''
+        cmd = f"{program} batchretrieve -t {topics} -w {model} {model_param} -Dtrec.results={result_dir} -o {result_file}"
 
         if topics_single_line_format:
             cmd += " -s"
